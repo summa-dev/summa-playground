@@ -2,9 +2,11 @@ use std::str::FromStr;
 
 use dialoguer::{theme::ColorfulTheme, Input};
 use ethers::{
+    abi::{encode, Token},
     prelude::SignerMiddleware,
     providers::{Http, Provider},
     signers::{LocalWallet, Signer},
+    utils::keccak256,
 };
 
 use summa_backend::apis::snapshot::Snapshot;
@@ -43,7 +45,7 @@ pub fn initialize_snapshot() -> Snapshot<4, 6, 2, 8> {
     .unwrap()
 }
 
-pub fn initialize_client() -> SignerMiddleware<Provider<Http>, LocalWallet> {
+pub async fn initialize_client() -> SignerMiddleware<Provider<Http>, LocalWallet> {
     let mut private_key = String::new();
     let mut provider_url = String::new();
 

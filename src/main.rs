@@ -9,7 +9,9 @@ use inclusion_verification::verify_inclusion_proof;
 mod initialization;
 use initialization::{initialize_client, initialize_snapshot};
 mod solvency_proof;
-use solvency_proof::generate_proof_of_solvency;
+use solvency_proof::{generate_proof_of_ownership, generate_proof_of_solvency};
+mod summa_contract;
+// use summa_contract::summa::Summa;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -21,7 +23,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Initialize snapshot and client
     let snapshot = initialize_snapshot();
-    let client = initialize_client();
+    let client = initialize_client().await;
 
     println!(
         "Chain connected, chain id is : {}",
@@ -46,10 +48,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         match selections[selection] {
             "1. Generate and submit proof of wallet ownership" => {
-                let _account_ownership = snapshot.get_proof_of_account_ownership();
-
-                // TODO: send `submitProofOfAccountOwnership` transaction
+                generate_proof_of_ownership(&snapshot, &client).await;
             }
+
             "2. Generate and submit proof of solvency" => {
                 let _proof = generate_proof_of_solvency(&snapshot, &client).await;
 
