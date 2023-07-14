@@ -8,8 +8,8 @@ mod inclusion_verification;
 use inclusion_verification::verify_inclusion_proof;
 mod initialization;
 use initialization::{initialize_client, initialize_snapshot};
-mod solvency_proof;
-use solvency_proof::{generate_proof_of_ownership, generate_proof_of_solvency};
+mod submit_proof;
+use submit_proof::{generate_proof_of_ownership, process_proof_of_solvency};
 mod summa_contract;
 // use summa_contract::summa::Summa;
 
@@ -52,7 +52,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
 
             "2. Generate and submit proof of solvency" => {
-                let _proof = generate_proof_of_solvency(&snapshot, &client).await;
+                let _proof = process_proof_of_solvency(&snapshot, &client).await;
 
                 // TODO: send `submitProofOfSolvency` transaction
             }

@@ -16,21 +16,38 @@ use super::summa_contract::summa::Summa;
 pub async fn generate_proof_of_solvency(
     snapshot: &Snapshot<4, 6, 2, 8>,
     client: &SignerMiddleware<Provider<Http>, LocalWallet>,
-) -> Vec<String> {
+) -> String {
     let client2 = Arc::new(client.clone());
     let contract_address = Address::from_str("0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512").unwrap();
-    let _summa_contract = Summa::new(contract_address, client2);
+    let summa_contract = Summa::new(contract_address, client2);
 
     let ownership_data = snapshot.get_proof_of_account_ownership();
+    let asset_addresses = ownership_data.get_addresses(); // No needed actually
 
     // TODO: replace hard coded balances
     let asset_sum: [Fp; 2] = [Fp::from(556863u64), Fp::from(556863u64)];
 
-    let (_, proof) = snapshot
-        .generate_proof_of_solvency(ownership_data.get_addresses().clone(), Some(asset_sum))
+    let (solvency_data, _) = snapshot
+        .generate_proof_of_solvency(asset_addresses.clone(), Some(asset_sum))
         .unwrap();
 
-    proof
+    // Convert data types to be compatible with the contract
+    let mock_erc_20_address =
+        Address::from_str("0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0").unwrap();
+    let public_inputs = solvency_data.get_public_inputs();
+    let proof: &Bytes = solvency_data.get_proof_calldata();
+
+    let _result = summa_contract
+        .submit_proof_of_solvency(
+            vec![mock_erc_20_address],
+            public_inputs[1..].to_vec(), // first element is root hash
+            public_inputs[0],            // maybe public_inputs[0] is roothash?
+            proof.clone(),
+        )
+        .await
+        .unwrap();
+
+    "Suceess".to_string()
 }
 
 pub async fn generate_proof_of_ownership(

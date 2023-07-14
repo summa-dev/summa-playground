@@ -3749,7 +3749,6 @@ checksum = "81cdd64d312baedb58e21336b31bc043b77e01cc99033ce76ef539f78e965ebc"
 [[package]]
 name = "summa-backend"
 version = "0.1.0"
-source = "git+https://github.com/summa-dev/summa-solvency.git?branch=backend-snapshot#0262eb708bf78501b9b88baee93a79cef1683fd9"
 dependencies = [
  "base64 0.13.1",
  "csv",
@@ -3761,7 +3760,7 @@ dependencies = [
  "serde",
  "serde_json",
  "snark-verifier-sdk",
- "summa-solvency 0.1.0 (git+https://github.com/summa-dev/summa-solvency.git?branch=backend-snapshot)",
+ "summa-solvency 0.1.0",
  "tokio",
 ]
 
@@ -3785,7 +3784,6 @@ dependencies = [
 [[package]]
 name = "summa-solvency"
 version = "0.1.0"
-source = "git+https://github.com/summa-dev/summa-solvency.git?branch=backend-snapshot#0262eb708bf78501b9b88baee93a79cef1683fd9"
 dependencies = [
  "ark-std",
  "csv",
