@@ -11,7 +11,7 @@ where
 {
     let encoded: Vec<u8> = bincode::serialize(&data).unwrap();
 
-    let mut file = File::create(&file_name).unwrap();
+    let mut file = File::create(file_name).unwrap();
     file.write_all(&encoded).unwrap();
 
     println!("Exported {} to {}", description, file_name);
@@ -28,6 +28,7 @@ pub fn export_inclusion_proof(snapshot: &Snapshot<4, 6, 2, 8>) {
         .unwrap();
 
     println!("Generated inclusion proof for user #{}", user_index);
+
     println!(
         "the root_hash is: {:?}",
         inclusion_proof.get_public_inputs()[0][1]
@@ -39,5 +40,5 @@ pub fn export_inclusion_proof(snapshot: &Snapshot<4, 6, 2, 8>) {
         .interact()
         .unwrap();
 
-    export_data::<Vec<u8>>(&inclusion_proof.get_proof(), &file_name, "inclusion proof");
+    export_data::<Vec<u8>>(inclusion_proof.get_proof(), &file_name, "inclusion proof");
 }
