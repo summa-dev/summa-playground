@@ -17,18 +17,24 @@ where
     println!("Exported {} to {}", description, file_name);
 }
 
-pub fn export_inclusion_proof(snapshot: &Snapshot<15, 6, 2, 8>) {
+pub fn export_inclusion_proof(snapshot: &Snapshot<4, 6, 2, 8>) {
     let user_index: u64 = Input::new()
         .with_prompt("Enter user number")
         .interact()
         .unwrap();
 
     let inclusion_proof = snapshot
-        .generate_inclusion_proof(user_index as usize)
+        .generate_proof_of_inclusion(user_index as usize)
         .unwrap();
 
+    println!("Generated inclusion proof for user #{}", user_index);
+    println!(
+        "the root_hash is: {:?}",
+        inclusion_proof.get_public_inputs()[0]
+    );
+
     let file_name: String = Input::new()
-        .with_prompt("Enter proof file name for exporting")
+        .with_prompt("Enter proof file name to save")
         .with_initial_text("proof.bin")
         .interact()
         .unwrap();
