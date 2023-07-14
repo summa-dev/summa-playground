@@ -64,5 +64,6 @@ pub async fn initialize_client() -> SignerMiddleware<Provider<Http>, LocalWallet
     let wallet: LocalWallet = LocalWallet::from_str(&private_key).unwrap();
     let provider = Provider::<Http>::try_from(provider_url).unwrap();
 
-    SignerMiddleware::new(provider, wallet)
+    // TODO: check chainid from prompt
+    SignerMiddleware::new(provider, wallet.with_chain_id(31337u32))
 }

@@ -3,7 +3,7 @@ use std::{str::FromStr, sync::Arc};
 use ethers::{
     abi::Address,
     prelude::SignerMiddleware,
-    providers::{Http, Provider},
+    providers::{Http, Middleware, Provider},
     signers::LocalWallet,
     types::Bytes,
 };
@@ -16,7 +16,7 @@ use super::summa_contract::summa::Summa;
 pub async fn generate_proof_of_solvency(
     snapshot: &Snapshot<4, 6, 2, 8>,
     client: &SignerMiddleware<Provider<Http>, LocalWallet>,
-) -> String {
+) {
     let client2 = Arc::new(client.clone());
     let contract_address = Address::from_str("0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512").unwrap();
     let summa_contract = Summa::new(contract_address, client2);
@@ -37,17 +37,18 @@ pub async fn generate_proof_of_solvency(
     let public_inputs = solvency_data.get_public_inputs();
     let proof: &Bytes = solvency_data.get_proof_calldata();
 
-    let _result = summa_contract
+    summa_contract
         .submit_proof_of_solvency(
             vec![mock_erc_20_address],
             public_inputs[1..].to_vec(), // first element is root hash
             public_inputs[0],            // maybe public_inputs[0] is roothash?
             proof.clone(),
         )
+        .send()
         .await
         .unwrap();
 
-    "Suceess".to_string()
+    println!("the proof has been validated!");
 }
 
 pub async fn generate_proof_of_ownership(
@@ -78,6 +79,7 @@ pub async fn generate_proof_of_ownership(
 
     summa_contract
         .submit_proof_of_account_ownership(cex_addresses, cex_signatures, message.to_string())
+        .send()
         .await
         .unwrap();
 

@@ -9,9 +9,8 @@ use inclusion_verification::verify_inclusion_proof;
 mod initialization;
 use initialization::{initialize_client, initialize_snapshot};
 mod submit_proof;
-use submit_proof::{generate_proof_of_ownership, process_proof_of_solvency};
+use submit_proof::{generate_proof_of_ownership, generate_proof_of_solvency};
 mod summa_contract;
-// use summa_contract::summa::Summa;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -50,11 +49,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             "1. Generate and submit proof of wallet ownership" => {
                 generate_proof_of_ownership(&snapshot, &client).await;
             }
-
             "2. Generate and submit proof of solvency" => {
-                let _proof = process_proof_of_solvency(&snapshot, &client).await;
-
-                // TODO: send `submitProofOfSolvency` transaction
+                generate_proof_of_solvency(&snapshot, &client).await;
             }
             "3. Generate proof of inclusion" => {
                 export_inclusion_proof(&snapshot);
