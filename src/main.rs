@@ -14,8 +14,8 @@ use solvency_proof::generate_proof_of_solvency;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Splash with figlet
-    let font = FIGfont::from_file("src/fonts/block.flf").unwrap();
-    let figure = font.convert("Summa").unwrap();
+    let font = FIGfont::from_file("src/fonts/ogre.flf").unwrap();
+    let figure = font.convert("SUMMA").unwrap();
     print!("{}", figure);
     println!("Proof of solvency for CryptoExchange\n\n");
 
