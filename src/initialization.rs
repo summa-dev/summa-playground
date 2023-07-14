@@ -59,16 +59,8 @@ pub fn initialize_client() -> SignerMiddleware<Provider<Http>, LocalWallet> {
         .interact_text()
         .unwrap();
 
-    let chain_id_str: String = Input::with_theme(&ColorfulTheme::default())
-        .with_prompt("Enter chain id for Signer")
-        .with_initial_text("31337")
-        .interact_text()
-        .unwrap();
-
-    let chain_id = chain_id_str.parse::<u64>().unwrap();
-
     let wallet: LocalWallet = LocalWallet::from_str(&private_key).unwrap();
     let provider = Provider::<Http>::try_from(provider_url).unwrap();
 
-    SignerMiddleware::new(provider, wallet.with_chain_id(chain_id))
+    SignerMiddleware::new(provider, wallet)
 }

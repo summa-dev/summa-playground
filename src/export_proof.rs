@@ -1,6 +1,6 @@
 use std::{fs::File, io::Write};
 
-use dialoguer::{theme::ColorfulTheme, Input, Select};
+use dialoguer::Input;
 use serde::Serialize;
 
 use summa_backend::apis::snapshot::Snapshot;
@@ -30,7 +30,7 @@ pub fn export_inclusion_proof(snapshot: &Snapshot<4, 6, 2, 8>) {
     println!("Generated inclusion proof for user #{}", user_index);
     println!(
         "the root_hash is: {:?}",
-        inclusion_proof.get_public_inputs()[0]
+        inclusion_proof.get_public_inputs()[0][1]
     );
 
     let file_name: String = Input::new()

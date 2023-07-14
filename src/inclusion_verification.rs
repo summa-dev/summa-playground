@@ -4,7 +4,6 @@ use std::io::prelude::*;
 use bincode;
 use dialoguer::{Confirm, Input};
 use num_bigint::BigInt;
-use serde::{Deserialize, Serialize};
 
 use halo2_proofs::halo2curves::{bn256::Fr as Fp, ff::PrimeField};
 

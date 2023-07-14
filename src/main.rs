@@ -1,4 +1,5 @@
 use dialoguer::{theme::ColorfulTheme, Select};
+use ethers::providers::Middleware;
 use figlet_rs::FIGfont;
 
 mod export_proof;
@@ -7,6 +8,8 @@ mod inclusion_verification;
 use inclusion_verification::verify_inclusion_proof;
 mod initialization;
 use initialization::{initialize_client, initialize_snapshot};
+mod solvency_proof;
+use solvency_proof::generate_proof_of_solvency;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -19,6 +22,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize snapshot and client
     let snapshot = initialize_snapshot();
     let client = initialize_client();
+
+    println!(
+        "Chain connected, chain id is : {}",
+        client.get_chainid().await.unwrap()
+    );
 
     loop {
         let selections = &[
@@ -38,10 +46,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         match selections[selection] {
             "1. Generate and submit proof of wallet ownership" => {
-                // TODO : generate proof of wallet ownership then submit it to the contract
+                let _account_ownership = snapshot.get_proof_of_account_ownership();
+
+                // TODO: send `submitProofOfAccountOwnership` transaction
             }
             "2. Generate and submit proof of solvency" => {
-                // TODO : generate proof of solvency then submit it to the contract
+                let _proof = generate_proof_of_solvency(&snapshot, &client).await;
+
+                // TODO: send `submitProofOfSolvency` transaction
             }
             "3. Generate proof of inclusion" => {
                 export_inclusion_proof(&snapshot);
