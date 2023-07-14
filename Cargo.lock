@@ -1338,6 +1338,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "figlet-rs"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4742a071cd9694fc86f9fa1a08fa3e53d40cc899d7ee532295da2d085639fbc5"
+
+[[package]]
 name = "fixed-hash"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3743,6 +3749,7 @@ checksum = "81cdd64d312baedb58e21336b31bc043b77e01cc99033ce76ef539f78e965ebc"
 [[package]]
 name = "summa-backend"
 version = "0.1.0"
+source = "git+https://github.com/summa-dev/summa-solvency.git?branch=backend-snapshot#f09d2b0c20e01edff60359b791bdc85c071ddd7c"
 dependencies = [
  "base64 0.13.1",
  "csv",
@@ -3754,7 +3761,7 @@ dependencies = [
  "serde",
  "serde_json",
  "snark-verifier-sdk",
- "summa-solvency 0.1.0",
+ "summa-solvency 0.1.0 (git+https://github.com/summa-dev/summa-solvency.git?branch=backend-snapshot)",
  "tokio",
 ]
 
@@ -3765,6 +3772,7 @@ dependencies = [
  "bincode",
  "dialoguer",
  "ethers",
+ "figlet-rs",
  "halo2_proofs",
  "num-bigint",
  "serde",
@@ -3776,6 +3784,7 @@ dependencies = [
 [[package]]
 name = "summa-solvency"
 version = "0.1.0"
+source = "git+https://github.com/summa-dev/summa-solvency.git?branch=backend-snapshot#f09d2b0c20e01edff60359b791bdc85c071ddd7c"
 dependencies = [
  "ark-std",
  "csv",

@@ -13,7 +13,7 @@ use summa_solvency::{circuits::utils::full_verifier, merkle_sum_tree::Entry};
 
 #[derive(Serialize, Deserialize)]
 pub struct InclusionProofExport {
-    pub vk: Vec<u8>,
+    pub public_input: Vec<Vec<Fp>>,
     pub proof: Vec<u8>,
 }
 
@@ -43,6 +43,7 @@ pub fn verify_inclusion_proof(snapshot: &Snapshot<15, 6, 2, 8>) {
     let mut file = File::open(proof_file).unwrap();
     let mut encoded = Vec::new();
     file.read_to_end(&mut encoded).unwrap();
+
     let loaded_proof: InclusionProofExport = bincode::deserialize(&encoded[..]).unwrap();
 
     println!("Initiating verification of `leaf_hash`.");
