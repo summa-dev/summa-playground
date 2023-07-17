@@ -4,7 +4,7 @@ use ethers::{
     abi::Address,
     prelude::SignerMiddleware,
     providers::{Http, Middleware, Provider, StreamExt},
-    signers::{LocalWallet, Signer},
+    signers::LocalWallet,
     types::Bytes,
 };
 use halo2_proofs::halo2curves::bn256::Fr as Fp;
@@ -25,7 +25,7 @@ fn get_contract_instance(
 }
 
 pub async fn generate_proof_of_solvency(
-    snapshot: &Snapshot<4, 6, 2, 8>,
+    snapshot: &Snapshot<15, 6, 2, 8>,
     client: &SignerMiddleware<Provider<Http>, LocalWallet>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     // TODO: get contract address from config
@@ -36,7 +36,7 @@ pub async fn generate_proof_of_solvency(
     let asset_addresses = ownership_data.get_addresses(); // No needed actually
 
     // TODO: replace hard coded balances
-    let asset_sum: [Fp; 2] = [Fp::from(556863u64), Fp::from(556863u64)];
+    let asset_sum: [Fp; 2] = [Fp::from(1140453377u64), Fp::from(1642368560u64)];
 
     let (solvency_data, _) = snapshot
         .generate_proof_of_solvency(asset_addresses.clone(), Some(asset_sum))
@@ -67,7 +67,7 @@ pub async fn generate_proof_of_solvency(
     let mut stream = event.stream().await?.with_meta().take(1);
     while let Some(Ok((event, meta))) = stream.next().await {
         println!("The proof has been validated ✅");
-        println!("        mst_root: 0x{:02x}", event.mst_root);
+        println!("       root hash: {:#64x}", event.mst_root);
         println!("transaction hash: {:?}", meta.transaction_hash);
     }
 
@@ -75,7 +75,7 @@ pub async fn generate_proof_of_solvency(
 }
 
 pub async fn generate_proof_of_ownership(
-    snapshot: &Snapshot<4, 6, 2, 8>,
+    snapshot: &Snapshot<15, 6, 2, 8>,
     client: &SignerMiddleware<Provider<Http>, LocalWallet>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let summa_contract =

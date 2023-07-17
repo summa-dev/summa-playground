@@ -12,7 +12,6 @@ use summa_solvency::{
     merkle_sum_tree::{big_int_to_fp, Entry},
 };
 
-
 fn generate_leaf_hash<const N_ASSETS: usize>(user_name: String, balances: Vec<usize>) -> Fp {
     // Convert usize to BigInt for the `Entry` struct
     let balances_big_int: Vec<BigInt> = balances.into_iter().map(BigInt::from).collect();
@@ -23,7 +22,7 @@ fn generate_leaf_hash<const N_ASSETS: usize>(user_name: String, balances: Vec<us
     entry.compute_leaf().hash
 }
 
-pub fn verify_inclusion_proof(snapshot: &Snapshot<4, 6, 2, 8>) {
+pub fn verify_inclusion_proof(snapshot: &Snapshot<15, 6, 2, 8>) {
     // Get the path of the proof file
     let proof_file: String = Input::new()
         .with_prompt("Please input the path to the proof file")
@@ -71,7 +70,7 @@ pub fn verify_inclusion_proof(snapshot: &Snapshot<4, 6, 2, 8>) {
     let leaf_hash = generate_leaf_hash::<2>(user_name, balances_usize.clone());
 
     // Get confirmation from the user
-    let proceed = Confirm::new()
+    let _proceed = Confirm::new()
         .with_prompt(format!(
             "Your leaf hash is {:?}.\nAre you ready to proceed with the proof verification?",
             leaf_hash
@@ -87,9 +86,9 @@ pub fn verify_inclusion_proof(snapshot: &Snapshot<4, 6, 2, 8>) {
     if verification_result {
         // Perform verification
         println!("==========================");
-        println!("    root_hash :  \"{}\"", root_hash_str);
-        println!("    leaf_hash: \"{:?}\"", leaf_hash);
-        println!("    balances : {:?}", balances_usize);
+        println!("    root hash : {:?}", root_hash);
+        println!("    leaf hash : {:?}", leaf_hash);
+        println!("     balances : {:?}", balances_usize);
         println!("  ");
         println!("  The proof has been validated ✅");
         println!("==========================");

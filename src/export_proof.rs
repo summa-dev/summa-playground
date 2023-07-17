@@ -17,7 +17,7 @@ where
     println!("Exported {} to {}", description, file_name);
 }
 
-pub fn export_inclusion_proof(snapshot: &Snapshot<4, 6, 2, 8>) {
+pub fn export_inclusion_proof(snapshot: &Snapshot<15, 6, 2, 8>) {
     let user_index: u64 = Input::new()
         .with_prompt("Enter user number")
         .interact()

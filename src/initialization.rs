@@ -2,16 +2,14 @@ use std::str::FromStr;
 
 use dialoguer::{theme::ColorfulTheme, Input};
 use ethers::{
-    abi::{encode, Token},
     prelude::SignerMiddleware,
-    providers::{Http, Provider},
+    providers::{Http, Middleware, Provider},
     signers::{LocalWallet, Signer},
-    utils::keccak256,
 };
 
 use summa_backend::apis::snapshot::Snapshot;
 
-pub fn initialize_snapshot() -> Snapshot<4, 6, 2, 8> {
+pub fn initialize_snapshot() -> Snapshot<15, 6, 2, 8> {
     // reuires these files for initialize snapshot
     let mut csv_entry_path = String::new();
     let mut csv_signature_path = String::new();
@@ -19,7 +17,7 @@ pub fn initialize_snapshot() -> Snapshot<4, 6, 2, 8> {
 
     csv_entry_path = Input::with_theme(&ColorfulTheme::default())
         .with_prompt("Enter path to entry CSV file")
-        .with_initial_text("csv/entry_16.csv")
+        .with_initial_text("csv/two_assets_entry_2_15.csv")
         .interact_text()
         .unwrap();
 
@@ -31,12 +29,12 @@ pub fn initialize_snapshot() -> Snapshot<4, 6, 2, 8> {
 
     ptau_path = Input::with_theme(&ColorfulTheme::default())
         .with_prompt("Enter path to ptau file for params")
-        .with_initial_text("ptau/hermez-raw-11")
+        .with_initial_text("ptau/hermez-raw-15")
         .interact_text()
         .unwrap();
 
     // initialize snapshot
-    Snapshot::<4, 6, 2, 8>::new(
+    Snapshot::<15, 6, 2, 8>::new(
         &csv_entry_path,
         &csv_signature_path,
         "Summa proof of solvency for CryptoExchange".to_string(),
@@ -57,13 +55,13 @@ pub async fn initialize_client() -> SignerMiddleware<Provider<Http>, LocalWallet
 
     provider_url = Input::with_theme(&ColorfulTheme::default())
         .with_prompt("Enter provider for Signer")
-        .with_initial_text("http://localhost:8545/")
+        .with_initial_text("http://localhost:8545")
         .interact_text()
         .unwrap();
 
     let wallet: LocalWallet = LocalWallet::from_str(&private_key).unwrap();
     let provider = Provider::<Http>::try_from(provider_url).unwrap();
+    let chain_id = provider.get_chainid().await.unwrap();
 
-    // TODO: check chainid from prompt
-    SignerMiddleware::new(provider, wallet.with_chain_id(31337u32))
+    SignerMiddleware::new(provider, wallet.with_chain_id(chain_id.as_u32()))
 }
