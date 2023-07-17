@@ -26,7 +26,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = initialize_client().await;
 
     println!(
-        "Chain connected, chain ID: {}",
+        "  Chain connected, chain ID: {}\n",
         client.get_chainid().await.unwrap()
     );
 

@@ -56,7 +56,8 @@ pub async fn generate_proof_of_solvency(
     }
 
     if registered_addresses_str.len() == 0 {
-        Err("No account addresses found on the verifier contract, Please submit 'proof of ownership'")?;
+        println!("  No account addresses found on the verifier contract,\n  Please submit 'proof of ownership' first.");
+        return Ok(());
     }
 
     println!(
@@ -108,7 +109,7 @@ pub async fn generate_proof_of_solvency(
 
     let mut stream = event.stream().await?.with_meta().take(1);
     while let Some(Ok((event, meta))) = stream.next().await {
-        println!("       root hash: {:#64x}", event.mst_root);
+        println!("       root hash: {:#066x}", event.mst_root);
         println!("transaction hash: {:?}", meta.transaction_hash);
         println!("The proof has been validated ✅");
     }
