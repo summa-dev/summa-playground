@@ -17,5 +17,3 @@ target/
 # Added by cargo
 
 /target
-/ptau
-/csv

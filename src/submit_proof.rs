@@ -5,15 +5,23 @@ use ethers::{
     prelude::SignerMiddleware,
     providers::{Http, Middleware, Provider, StreamExt},
     signers::LocalWallet,
-    types::Bytes,
+    types::{Bytes, U256},
 };
 use halo2_proofs::halo2curves::bn256::Fr as Fp;
 
 use summa_backend::apis::snapshot::Snapshot;
 
+use super::mock_erc20::MockERC20;
 use super::summa_contract::summa::{
     ExchangeAddressesSubmittedFilter, ProofOfSolvencySubmittedFilter, Summa,
 };
+
+fn update_balance(mut accumulator: Fp, balance: U256) -> Fp {
+    let mut u8_balance = [0u8; 32];
+    balance.to_little_endian(&mut u8_balance);
+    accumulator += Fp::from_bytes(&u8_balance).unwrap();
+    accumulator
+}
 
 fn get_contract_instance(
     client: &SignerMiddleware<Provider<Http>, LocalWallet>,
@@ -31,20 +39,54 @@ pub async fn generate_proof_of_solvency(
     // TODO: get contract address from config
     let summa_contract =
         get_contract_instance(client, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+    let mock_erc_20_address =
+        Address::from_str("0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0").unwrap();
+    let mock_erc_20_contract = MockERC20::new(mock_erc_20_address, Arc::new(client.clone()));
 
-    let ownership_data = snapshot.get_proof_of_account_ownership();
-    let asset_addresses = ownership_data.get_addresses(); // No needed actually
+    // Fetch all registered addresses from onchain
+    let mut registered_addresses: Vec<Address> = Vec::new();
+    let mut registered_addresses_str: Vec<String> = Vec::new();
 
-    // TODO: replace hard coded balances
-    let asset_sum: [Fp; 2] = [Fp::from(1140453377u64), Fp::from(1642368560u64)];
+    let mut i = 0;
+
+    while let Ok(addr) = summa_contract.cex_addresses(U256::from(i)).await {
+        registered_addresses_str.push(addr.to_string());
+        registered_addresses.push(addr);
+        i += 1;
+    }
+
+    if registered_addresses_str.len() == 0 {
+        Err("No account addresses found on the verifier contract, Please submit 'proof of ownership'")?;
+    }
+
+    println!(
+        "Found {} addresses on the verifier contract",
+        registered_addresses.len()
+    );
+
+    // Fetch balances from on-chain
+    let mut sum_eth_balance = Fp::zero();
+    let mut sum_erc20_balance = Fp::zero();
+
+    for address in registered_addresses {
+        let eth_balance: U256 = client.get_balance(address, None).await.unwrap();
+        let erc_balance = mock_erc_20_contract.balance_of(address).await.unwrap();
+
+        sum_eth_balance = update_balance(sum_eth_balance, eth_balance);
+        sum_erc20_balance = update_balance(sum_erc20_balance, erc_balance);
+    }
+
+    if sum_eth_balance >= Fp::from(u64::MAX) || sum_erc20_balance >= Fp::from(u64::MAX) {
+        Err("The CLI demo does not support a total balance sum exceeding 64 bits.")?;
+    }
+
+    let asset_sum: [Fp; 2] = [sum_eth_balance, sum_erc20_balance];
 
     let (solvency_data, _) = snapshot
-        .generate_proof_of_solvency(asset_addresses.clone(), Some(asset_sum))
+        .generate_proof_of_solvency(registered_addresses_str.clone(), Some(asset_sum))
         .unwrap();
 
     // Convert data types to be compatible with the contract
-    let mock_erc_20_address =
-        Address::from_str("0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0").unwrap();
     let public_inputs = solvency_data.get_public_inputs();
     let proof: &Bytes = solvency_data.get_proof_calldata();
 
@@ -66,9 +108,9 @@ pub async fn generate_proof_of_solvency(
 
     let mut stream = event.stream().await?.with_meta().take(1);
     while let Some(Ok((event, meta))) = stream.next().await {
-        println!("The proof has been validated ✅");
         println!("       root hash: {:#64x}", event.mst_root);
         println!("transaction hash: {:?}", meta.transaction_hash);
+        println!("The proof has been validated ✅");
     }
 
     Ok(())
@@ -111,12 +153,12 @@ pub async fn generate_proof_of_ownership(
 
     let mut stream = event.stream().await?.with_meta().take(1);
     while let Some(Ok((event, meta))) = stream.next().await {
-        println!("The proof has been validated ✅");
         println!(" CEX addresses:");
         for (i, addr) in event.cex_addresses.iter().enumerate() {
             println!("  {}: {:?}", i, addr);
         }
         println!("transaction hash: {:?}", meta.transaction_hash);
+        println!("The proof has been validated ✅");
     }
 
     Ok(())
