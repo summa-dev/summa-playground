@@ -21,3 +21,12 @@ It's also capable of demonstrating how proofs for each user can be created and s
 ## Prerequision
 
 Before executing the CLI application, it's necessary to establish and operate a hardhat node with a deployed Summa verifier contract and Mock ERC20 for testing. This hardhat node should be ready with a specific balance amount.
+
+For your convenience, a Docker image for testing has been uploaded. It can be easily run using the following commands:
+
+```
+> docker pull sifnoc/summa-smart-contract:v0.1
+> docker run -p 8545:8545 sifnoc/summa-smart-contract:v0.1
+```
+
+If you're interested in delving deeper into the test chain, please refer to the branch [summa-playground/cli-app-with-hardhat]https://github.com/summa-dev/summa-playground/tree/cli-app-with-hardhat/contracts."
