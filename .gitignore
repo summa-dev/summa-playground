@@ -13,6 +13,18 @@ target/
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
 
+# hardhat node
+contracts/node_modules
+contracts/.env
+contracts/coverage
+contracts/coverage.json
+contracts/typechain
+contracts/typechain-types
+contracts/.DS_Store
+
+# Hardhat files
+contracts/cache
+contracts/artifacts
 
 # Added by cargo
 
