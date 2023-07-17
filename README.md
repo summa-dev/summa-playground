@@ -29,4 +29,22 @@ For your convenience, a Docker image for testing has been uploaded. It can be ea
 > docker run -p 8545:8545 sifnoc/summa-smart-contract:v0.1
 ```
 
-If you're interested in delving deeper into the test chain, please refer to the branch [summa-playground/cli-app-with-hardhat]https://github.com/summa-dev/summa-playground/tree/cli-app-with-hardhat/contracts."
+If you're interested in delving deeper into the test chain, please refer to the branch [summa-playground/cli-app-with-hardhat](https://github.com/summa-dev/summa-playground/tree/cli-app-with-hardhat/contracts)
+
+## Installation
+
+As this is a Rust project, you will need Rust and Cargo installed in your system. Once installed, you can build the project using the following command:
+
+```
+> cargo build
+```
+
+## Usage
+
+You can run the CLI app with this command:
+
+```
+> cargo run
+```
+
+Enjoy!
