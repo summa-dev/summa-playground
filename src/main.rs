@@ -48,10 +48,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         match selections[selection] {
             "1. Generate and submit proof of wallet ownership" => {
-                generate_proof_of_ownership(&snapshot, &client).await;
+                let result = generate_proof_of_ownership(&snapshot, &client).await;
+                if result.is_err() {
+                    println!("Error: {}", result.err().unwrap());
+                }
             }
             "2. Generate and submit proof of solvency" => {
-                generate_proof_of_solvency(&snapshot, &client).await;
+                let result = generate_proof_of_solvency(&snapshot, &client).await;
+                if result.is_err() {
+                    println!("Error: {}", result.err().unwrap());
+                }
             }
             "3. Generate proof of inclusion" => {
                 export_inclusion_proof(&snapshot);

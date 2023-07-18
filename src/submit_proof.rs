@@ -43,35 +43,17 @@ pub async fn generate_proof_of_solvency(
         Address::from_str("0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0").unwrap();
     let mock_erc_20_contract = MockERC20::new(mock_erc_20_address, Arc::new(client.clone()));
 
-    // Fetch all registered addresses from onchain
-    let mut registered_addresses: Vec<Address> = Vec::new();
-    let mut registered_addresses_str: Vec<String> = Vec::new();
-
-    let mut i = 0;
-
-    while let Ok(addr) = summa_contract.cex_addresses(U256::from(i)).await {
-        registered_addresses_str.push(addr.to_string());
-        registered_addresses.push(addr);
-        i += 1;
-    }
-
-    if registered_addresses_str.len() == 0 {
-        println!("  No account addresses found on the verifier contract,\n  Please submit 'proof of ownership' first.");
-        return Ok(());
-    }
-
-    println!(
-        "Found {} addresses on the verifier contract",
-        registered_addresses.len()
-    );
+    let ownership_data = snapshot.get_proof_of_account_ownership();
+    let addresses = ownership_data.get_addresses();
 
     // Fetch balances from on-chain
     let mut sum_eth_balance = Fp::zero();
     let mut sum_erc20_balance = Fp::zero();
 
-    for address in registered_addresses {
-        let eth_balance: U256 = client.get_balance(address, None).await.unwrap();
-        let erc_balance = mock_erc_20_contract.balance_of(address).await.unwrap();
+    for address in addresses {
+        let addr = Address::from_str(address).unwrap();
+        let eth_balance: U256 = client.get_balance(addr, None).await.unwrap();
+        let erc_balance = mock_erc_20_contract.balance_of(addr).await.unwrap();
 
         sum_eth_balance = update_balance(sum_eth_balance, eth_balance);
         sum_erc20_balance = update_balance(sum_erc20_balance, erc_balance);
@@ -84,7 +66,7 @@ pub async fn generate_proof_of_solvency(
     let asset_sum: [Fp; 2] = [sum_eth_balance, sum_erc20_balance];
 
     let (solvency_data, _) = snapshot
-        .generate_proof_of_solvency(registered_addresses_str.clone(), Some(asset_sum))
+        .generate_proof_of_solvency(addresses.clone(), Some(asset_sum))
         .unwrap();
 
     // Convert data types to be compatible with the contract
