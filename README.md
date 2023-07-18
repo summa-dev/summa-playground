@@ -44,7 +44,7 @@ As this is a Rust project, you will need Rust and Cargo installed in your system
 You can run the CLI app with this command:
 
 ```
-> cargo run
+> cargo run --release
 ```
 
 Enjoy!
