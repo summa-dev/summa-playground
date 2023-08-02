@@ -2,19 +2,19 @@ use std::fs::File;
 use std::io::prelude::*;
 
 use dialoguer::{Confirm, Input};
-use num_bigint::{BigInt, Sign};
+use num_bigint::BigUint;
 
 use halo2_proofs::halo2curves::bn256::Fr as Fp;
 
 use summa_backend::apis::snapshot::Snapshot;
 use summa_solvency::{
     circuits::utils::full_verifier,
-    merkle_sum_tree::{big_int_to_fp, Entry},
+    merkle_sum_tree::{big_uint_to_fp, Entry},
 };
 
 fn generate_leaf_hash<const N_ASSETS: usize>(user_name: String, balances: Vec<usize>) -> Fp {
-    // Convert usize to BigInt for the `Entry` struct
-    let balances_big_int: Vec<BigInt> = balances.into_iter().map(BigInt::from).collect();
+    // Convert usize to BigUint for the `Entry` struct
+    let balances_big_int: Vec<BigUint> = balances.into_iter().map(BigUint::from).collect();
 
     let entry: Entry<N_ASSETS> =
         Entry::new(user_name, balances_big_int.try_into().unwrap()).unwrap();
@@ -48,9 +48,9 @@ pub fn verify_inclusion_proof(snapshot: &Snapshot<15, 6, 2, 8>) {
     let root_hash_bytes =
         hex::decode(root_hash_str.strip_prefix("0x").unwrap()).expect("Decoding failed");
 
-    let root_hash_big_int = BigInt::from_bytes_be(Sign::Plus, &root_hash_bytes);
+    let root_hash_big_int = BigUint::from_bytes_be(&root_hash_bytes);
 
-    let root_hash = big_int_to_fp(&root_hash_big_int);
+    let root_hash = big_uint_to_fp(&root_hash_big_int);
 
     // Ask for user details
     let user_name: String = Input::new()
@@ -105,14 +105,15 @@ mod tests {
     #[test]
     fn test_generate_leaf_hash() {
         let user_name = "dxGaEAii".to_string();
-        let balances = vec![11888, 41163];
+        let balances = vec![11888, 58946];
         let leaf_hash = generate_leaf_hash::<2>(user_name, balances);
 
         assert_eq!(
             leaf_hash,
             // "0x0e113acd03b98f0bab0ef6f577245d5d008cbcc19ef2dab3608aa4f37f72a407"
+            // "0x0b38859334883b90f5c17cd250d166b40a6f754ed24d3b11169f70ed49780550"
             Fp::from_str_vartime(
-                "6362822108736413915574850018842190920390136280184018644072260166743334495239"
+                "5075306670952085051678079899488543418523134581904400252624929033793270449488"
             )
             .unwrap()
         );

@@ -10,8 +10,6 @@ mod initialization;
 use initialization::{initialize_client, initialize_snapshot};
 mod submit_proof;
 use submit_proof::{generate_proof_of_ownership, generate_proof_of_solvency};
-mod mock_erc20;
-mod summa_contract;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

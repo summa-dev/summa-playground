@@ -9,11 +9,12 @@ use ethers::{
 };
 use halo2_proofs::halo2curves::bn256::Fr as Fp;
 
-use summa_backend::apis::snapshot::Snapshot;
-
-use super::mock_erc20::MockERC20;
-use super::summa_contract::summa::{
-    ExchangeAddressesSubmittedFilter, ProofOfSolvencySubmittedFilter, Summa,
+use summa_backend::{
+    apis::snapshot::Snapshot,
+    contracts::generated::{
+        mock_erc20::MockERC20,
+        summa_contract::{ExchangeAddressesSubmittedFilter, ProofOfSolvencySubmittedFilter, Summa},
+    },
 };
 
 fn update_balance(mut accumulator: Fp, balance: U256) -> Fp {
@@ -36,7 +37,6 @@ pub async fn generate_proof_of_solvency(
     snapshot: &Snapshot<15, 6, 2, 8>,
     client: &SignerMiddleware<Provider<Http>, LocalWallet>,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    // TODO: get contract address from config
     let summa_contract =
         get_contract_instance(client, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
     let mock_erc_20_address =
@@ -66,7 +66,7 @@ pub async fn generate_proof_of_solvency(
     let asset_sum: [Fp; 2] = [sum_eth_balance, sum_erc20_balance];
 
     let (solvency_data, _) = snapshot
-        .generate_proof_of_solvency(addresses.clone(), Some(asset_sum))
+        .generate_proof_of_solvency(addresses.clone(), asset_sum)
         .unwrap();
 
     // Convert data types to be compatible with the contract

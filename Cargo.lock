@@ -3749,19 +3749,21 @@ checksum = "81cdd64d312baedb58e21336b31bc043b77e01cc99033ce76ef539f78e965ebc"
 [[package]]
 name = "summa-backend"
 version = "0.1.0"
-source = "git+https://github.com/summa-dev/summa-solvency.git?branch=backend-snapshot#4f37cae33bde3f380df0b07c34fe1ef3fb11d66a"
+source = "git+https://github.com/summa-dev/summa-solvency.git?rev=7e39b8#7e39b84b9210ff149a545cfe54495297283edb45"
 dependencies = [
  "base64 0.13.1",
+ "bincode",
  "csv",
  "dotenv",
  "ethers",
+ "futures",
  "halo2_proofs",
  "num-bigint",
  "reqwest",
  "serde",
  "serde_json",
  "snark-verifier-sdk",
- "summa-solvency 0.1.0 (git+https://github.com/summa-dev/summa-solvency.git?branch=backend-snapshot)",
+ "summa-solvency",
  "tokio",
 ]
 
@@ -3778,39 +3780,14 @@ dependencies = [
  "num-bigint",
  "serde",
  "summa-backend",
- "summa-solvency 0.1.0 (git+https://github.com/summa-dev/summa-solvency.git?branch=master)",
+ "summa-solvency",
  "tokio",
 ]
 
 [[package]]
 name = "summa-solvency"
 version = "0.1.0"
-source = "git+https://github.com/summa-dev/summa-solvency.git?branch=backend-snapshot#4f37cae33bde3f380df0b07c34fe1ef3fb11d66a"
-dependencies = [
- "ark-std",
- "csv",
- "ecc 0.1.0 (git+https://github.com/privacy-scaling-explorations/halo2wrong)",
- "ecdsa 0.1.0",
- "ethers",
- "gadgets",
- "halo2_gadgets",
- "halo2_proofs",
- "hex",
- "itertools",
- "maingate 0.1.0 (git+https://github.com/privacy-scaling-explorations/halo2wrong?tag=v2023_04_20)",
- "num-bigint",
- "num_cpus",
- "rand",
- "regex",
- "serde",
- "snark-verifier",
- "snark-verifier-sdk",
-]
-
-[[package]]
-name = "summa-solvency"
-version = "0.1.0"
-source = "git+https://github.com/summa-dev/summa-solvency.git?branch=master#6d46504b74a00f75203e1fe42b63fe5ad5db4651"
+source = "git+https://github.com/summa-dev/summa-solvency.git?rev=7e39b8#7e39b84b9210ff149a545cfe54495297283edb45"
 dependencies = [
  "ark-std",
  "csv",
